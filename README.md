@@ -1,8 +1,8 @@
-# goldentellus-knowledge
+# 🧠 goldentellus-knowledge
 
 按 FDE 流水线角色组织的知识体系。
 
-## 三句话导航
+## 🗺️ 三句话导航
 
 > 这是什么：GoldenTellus 的系统化学习内容。
 >
@@ -10,7 +10,7 @@
 >
 > 我应该看：先读流水线基础，再选择一个工位深入。
 
-## 路径
+## 🧩 路径
 
 - [00-pipeline-fundamentals/](./00-pipeline-fundamentals/)：全员通识
 - [01-lead-fde/](./01-lead-fde/)：全流程协调
