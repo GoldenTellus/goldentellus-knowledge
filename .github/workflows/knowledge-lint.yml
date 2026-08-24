@@ -15,6 +15,7 @@ on:
       - '99-general/**/*.md'
       - 'scripts/**/*.py'
       - 'tests/**/*.py'
+      - '.github/workflows/knowledge-lint.yml'
   push:
     branches: [main]
     paths:
@@ -30,6 +31,7 @@ on:
       - '99-general/**/*.md'
       - 'scripts/**/*.py'
       - 'tests/**/*.py'
+      - '.github/workflows/knowledge-lint.yml'
   workflow_dispatch:
 
 permissions:

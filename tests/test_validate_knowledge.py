@@ -21,6 +21,12 @@ def write_article(root: Path, relative_path: str, frontmatter: str, body: str = 
 
 
 class KnowledgeValidationTests(unittest.TestCase):
+    def test_accepts_an_unchanged_legacy_draft_placeholder(self) -> None:
+        relative_path = next(iter(validate_knowledge.LEGACY_DRAFT_BASELINE))
+        article = PROJECT_ROOT / relative_path
+
+        self.assertEqual(validate_knowledge.validate_paths([article]), [])
+
     def test_accepts_a_complete_published_article(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)

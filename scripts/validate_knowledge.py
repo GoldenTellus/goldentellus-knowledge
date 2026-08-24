@@ -57,7 +57,7 @@ def is_baselined_draft_placeholder(path: Path) -> bool:
     except ValueError:
         return False
     expected_hash = LEGACY_DRAFT_BASELINE.get(relative_path)
-    actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+    actual_hash = hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
     return expected_hash == actual_hash
 
 
