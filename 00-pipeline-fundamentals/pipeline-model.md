@@ -1,3 +1,19 @@
+---
+id: K-GENERAL-005
+title: "流水线模型"
+role: general
+category: pipeline
+difficulty: beginner
+status: draft
+source_kind: mixed
+evidence_types: []
+related_cases: []
+related_demos: []
+related_resources: []
+date: 2026-08-23
+authors: [GoldenTellus]
+---
+
 # 流水线模型
 
 ```text
