@@ -37,6 +37,7 @@ class KnowledgeValidationTests(unittest.TestCase):
 title: \"Structured discovery\"
 role: analyst
 category: methodology
+content_type: methodology
 difficulty: intermediate
 status: published
 source_kind: dialogue
@@ -61,6 +62,7 @@ authors: [GoldenTellus]
 title: \"Missing metadata\"
 role: analyst
 category: methodology
+content_type: methodology
 difficulty: beginner
 status: published
 source_kind: dialogue
@@ -77,6 +79,32 @@ authors: []
 
             self.assertTrue(any("author" in error for error in errors), errors)
 
+    def test_rejects_an_article_missing_content_type(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            article = write_article(
+                root,
+                "02-analyst/missing-content-type.md",
+                """id: K-ANALYST-005
+title: "Missing content type"
+role: analyst
+category: methodology
+difficulty: beginner
+status: draft
+source_kind: dialogue
+evidence_types: []
+related_cases: []
+related_demos: []
+related_resources: []
+date: 2026-08-25
+authors: []
+""",
+            )
+
+            errors = validate_knowledge.validate_paths([article])
+
+            self.assertTrue(any("content_type" in error for error in errors), errors)
+
     def test_rejects_duplicate_article_ids(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -84,6 +112,7 @@ authors: []
 title: \"Duplicate\"
 role: analyst
 category: methodology
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: dialogue
@@ -111,6 +140,7 @@ authors: []
 title: "Invalid date"
 role: analyst
 category: methodology
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: dialogue
@@ -126,6 +156,85 @@ authors: []
             errors = validate_knowledge.validate_paths([article])
 
             self.assertTrue(any("real calendar date" in error for error in errors), errors)
+
+    def test_accepts_a_case_learning_article_with_a_related_case(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            article = write_article(
+                root,
+                "03-architect/rag-tradeoffs.md",
+                """id: K-ARCHITECT-001
+title: "RAG tradeoffs from a case"
+role: architect
+category: architecture
+content_type: case-learning
+difficulty: intermediate
+status: draft
+source_kind: case
+evidence_types: [case-confirmed]
+related_cases: [CASE-001]
+related_demos: []
+related_resources: []
+date: 2026-08-25
+authors: []
+""",
+            )
+
+            self.assertEqual(validate_knowledge.validate_paths([article]), [])
+
+    def test_rejects_case_learning_article_without_a_related_case(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            article = write_article(
+                root,
+                "03-architect/missing-case.md",
+                """id: K-ARCHITECT-002
+title: "Missing case link"
+role: architect
+category: architecture
+content_type: case-learning
+difficulty: intermediate
+status: draft
+source_kind: case
+evidence_types: [case-confirmed]
+related_cases: []
+related_demos: []
+related_resources: []
+date: 2026-08-25
+authors: []
+""",
+            )
+
+            errors = validate_knowledge.validate_paths([article])
+
+            self.assertTrue(any("case-learning articles require" in error for error in errors), errors)
+
+    def test_rejects_case_learning_article_with_a_non_case_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            article = write_article(
+                root,
+                "03-architect/wrong-source.md",
+                """id: K-ARCHITECT-003
+title: "Wrong source kind"
+role: architect
+category: architecture
+content_type: case-learning
+difficulty: intermediate
+status: draft
+source_kind: dialogue
+evidence_types: [user-confirmed]
+related_cases: [CASE-001]
+related_demos: []
+related_resources: []
+date: 2026-08-25
+authors: []
+""",
+            )
+
+            errors = validate_knowledge.validate_paths([article])
+
+            self.assertTrue(any("source_kind" in error and "case-learning" in error for error in errors), errors)
 
     def test_rejects_new_draft_placeholder_without_frontmatter(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

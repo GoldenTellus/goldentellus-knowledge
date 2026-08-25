@@ -17,9 +17,10 @@ import yaml
 ALLOWED_DIFFICULTIES = {"beginner", "intermediate", "advanced"}
 ALLOWED_STATUSES = {"draft", "review", "published", "archived"}
 ALLOWED_SOURCE_KINDS = {"dialogue", "case", "research", "mixed"}
+ALLOWED_CONTENT_TYPES = {"methodology", "case-learning"}
 ARTICLE_ID_PATTERN = re.compile(r"^K-[A-Z0-9]+(?:-[A-Z0-9]+)*-\d{3,}$")
 REQUIRED_FIELDS = (
-    "id", "title", "role", "category", "difficulty", "status", "source_kind",
+    "id", "title", "role", "category", "content_type", "difficulty", "status", "source_kind",
     "evidence_types", "related_cases", "related_demos", "related_resources", "date", "authors",
 )
 LIST_FIELDS = ("evidence_types", "related_cases", "related_demos", "related_resources", "authors")
@@ -102,6 +103,8 @@ def validate_article(path: Path) -> list[str]:
         errors.append(f"{path}: status must be one of {sorted(ALLOWED_STATUSES)}")
     if metadata["source_kind"] not in ALLOWED_SOURCE_KINDS:
         errors.append(f"{path}: source_kind must be one of {sorted(ALLOWED_SOURCE_KINDS)}")
+    if metadata["content_type"] not in ALLOWED_CONTENT_TYPES:
+        errors.append(f"{path}: content_type must be one of {sorted(ALLOWED_CONTENT_TYPES)}")
     for field in LIST_FIELDS:
         value = metadata[field]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
@@ -116,6 +119,11 @@ def validate_article(path: Path) -> list[str]:
             errors.append(f"{path}: date must be a real calendar date")
     if metadata["status"] == "published" and not metadata["authors"]:
         errors.append(f"{path}: published articles require at least one author")
+    if metadata["content_type"] == "case-learning":
+        if metadata["source_kind"] not in {"case", "mixed"}:
+            errors.append(f"{path}: case-learning articles require source_kind 'case' or 'mixed'")
+        if not metadata["related_cases"]:
+            errors.append(f"{path}: case-learning articles require at least one related_cases entry")
     return errors
 
 

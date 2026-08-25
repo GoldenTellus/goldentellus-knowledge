@@ -3,6 +3,7 @@ id: K-GENERAL-002
 title: "FDE、咨询与外包的区别"
 role: general
 category: role-definition
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: mixed

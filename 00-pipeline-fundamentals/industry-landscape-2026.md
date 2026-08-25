@@ -3,6 +3,7 @@ id: K-GENERAL-004
 title: "2026 行业全景"
 role: general
 category: industry-research
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: research

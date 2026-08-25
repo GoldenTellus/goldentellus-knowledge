@@ -3,6 +3,7 @@ id: K-GENERAL-006
 title: "什么是 FDE"
 role: general
 category: role-definition
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: mixed

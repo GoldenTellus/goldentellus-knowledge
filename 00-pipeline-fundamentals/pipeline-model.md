@@ -3,6 +3,7 @@ id: K-GENERAL-005
 title: "流水线模型"
 role: general
 category: pipeline
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: mixed

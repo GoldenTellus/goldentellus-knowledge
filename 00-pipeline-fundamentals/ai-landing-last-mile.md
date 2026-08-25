@@ -3,6 +3,7 @@ id: K-GENERAL-001
 title: "AI 落地最后一公里"
 role: general
 category: pipeline
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: mixed

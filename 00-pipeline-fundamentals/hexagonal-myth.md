@@ -3,6 +3,7 @@ id: K-GENERAL-003
 title: "六边形战士神话"
 role: general
 category: team-design
+content_type: methodology
 difficulty: beginner
 status: draft
 source_kind: mixed
