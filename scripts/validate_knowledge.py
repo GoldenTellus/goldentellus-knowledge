@@ -25,9 +25,12 @@ REQUIRED_FIELDS = (
 )
 LIST_FIELDS = ("evidence_types", "related_cases", "related_demos", "related_resources", "authors")
 PLACEHOLDER_MARKER = "状态：待填草稿"
+NON_ARTICLE_FILENAMES = {"README.md", "MIGRATION.md"}
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 BASELINE_PATH = Path(__file__).with_name("legacy_knowledge_baseline.json")
 LEGACY_DRAFT_BASELINE: dict[str, str] = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+LEARNING_BASELINE_PATH = Path(__file__).with_name("legacy_learning_baseline.json")
+LEGACY_LEARNING_BASELINE: dict[str, str] = json.loads(LEARNING_BASELINE_PATH.read_text(encoding="utf-8"))
 
 
 def load_frontmatter(path: Path) -> tuple[dict[str, Any] | None, str | None]:
@@ -62,6 +65,17 @@ def is_baselined_draft_placeholder(path: Path) -> bool:
     return expected_hash == actual_hash
 
 
+def is_baselined_learning_document(path: Path) -> bool:
+    """Allow only unchanged documents migrated from the former roadmap repository."""
+    try:
+        relative_path = path.resolve().relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return False
+    expected_hash = LEGACY_LEARNING_BASELINE.get(relative_path)
+    actual_hash = hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+    return expected_hash == actual_hash
+
+
 def is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
@@ -80,7 +94,7 @@ def validate_article(path: Path) -> list[str]:
     if parsing_error:
         return [f"{path}: {parsing_error}"]
     if metadata is None:
-        if is_baselined_draft_placeholder(path):
+        if is_baselined_draft_placeholder(path) or is_baselined_learning_document(path):
             return []
         return [f"{path}: article is missing YAML frontmatter"]
 
@@ -130,10 +144,10 @@ def validate_article(path: Path) -> list[str]:
 def discover_articles(paths: Iterable[Path]) -> list[Path]:
     articles: list[Path] = []
     for path in paths:
-        if path.is_file() and path.suffix == ".md" and path.name != "README.md":
+        if path.is_file() and path.suffix == ".md" and path.name not in NON_ARTICLE_FILENAMES:
             articles.append(path)
         elif path.is_dir():
-            articles.extend(item for item in path.rglob("*.md") if item.name != "README.md")
+            articles.extend(item for item in path.rglob("*.md") if item.name not in NON_ARTICLE_FILENAMES)
     return sorted(set(articles))
 
 

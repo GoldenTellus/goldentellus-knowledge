@@ -12,7 +12,9 @@ on:
       - '06-integrator/**/*.md'
       - '07-ops/**/*.md'
       - '08-industry-specific/**/*.md'
+      - 'learning/**/*.md'
       - 'scripts/**/*.py'
+      - 'scripts/**/*.json'
       - 'tests/**/*.py'
       - '.github/workflows/knowledge-lint.yml'
   push:
@@ -27,7 +29,9 @@ on:
       - '06-integrator/**/*.md'
       - '07-ops/**/*.md'
       - '08-industry-specific/**/*.md'
+      - 'learning/**/*.md'
       - 'scripts/**/*.py'
+      - 'scripts/**/*.json'
       - 'tests/**/*.py'
       - '.github/workflows/knowledge-lint.yml'
   workflow_dispatch:

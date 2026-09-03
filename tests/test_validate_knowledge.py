@@ -27,6 +27,12 @@ class KnowledgeValidationTests(unittest.TestCase):
 
         self.assertEqual(validate_knowledge.validate_paths([article]), [])
 
+    def test_accepts_an_unchanged_migrated_learning_document(self) -> None:
+        relative_path = next(iter(validate_knowledge.LEGACY_LEARNING_BASELINE))
+        article = PROJECT_ROOT / relative_path
+
+        self.assertEqual(validate_knowledge.validate_paths([article]), [])
+
     def test_accepts_a_complete_published_article(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
@@ -257,6 +263,14 @@ authors: []
             errors = validate_knowledge.validate_paths([article])
 
             self.assertTrue(any("frontmatter" in error for error in errors))
+
+    def test_ignores_a_repository_migration_record(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            migration = root / "MIGRATION.md"
+            migration.write_text("# Migration\n", encoding="utf-8")
+
+            self.assertEqual(validate_knowledge.validate_paths([root]), [])
 
 
 if __name__ == "__main__":
